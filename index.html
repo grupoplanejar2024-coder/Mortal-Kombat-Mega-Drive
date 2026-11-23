@@ -328,12 +328,12 @@
             </div>
 
             <p class="description">
-                Entre no torneio mortal de artes marciais com golpes especiais, combos rápidos e finalizações icónicas em combates intensos um contra um.
+                Entre no torneio mortal de artes marciais com golpes especiais, combos rápidos e finalizações icônicas em combates intensos um contra um.
             </p>
 
             <div class="details">
                 <ul>
-                    <li>Género: Luta</li>
+                    <li>Gênero: Luta</li>
                 </ul>
             </div>
 
@@ -367,13 +367,13 @@
                 <div class="face-grid">
                     <div class="face-row">
                         <button type="button" class="md-circle-btn" data-key="q" data-code="KeyQ" data-key-code="81">X</button>
-                        <button type="button" class="md-circle-btn" data-key="y" data-code="KeyY" data-key-code="89">Y</button>
-                        <button type="button" class="md-circle-btn" data-key="e" data-code="KeyE" data-key-code="69">Z</button>
+                        <button type="button" class="md-circle-btn" data-key="e" data-code="KeyE" data-key-code="69">Y</button>
+                        <button type="button" class="md-circle-btn" data-key="r" data-code="KeyR" data-key-code="82">Z</button>
                     </div>
                     <div class="face-row">
                         <button type="button" class="md-circle-btn" data-key="z" data-code="KeyZ" data-key-code="90">A</button>
-                        <button type="button" class="md-circle-btn" data-key="b" data-code="KeyB" data-key-code="66">B</button>
-                        <button type="button" class="md-circle-btn" data-key="x" data-code="KeyX" data-key-code="88">C</button>
+                        <button type="button" class="md-circle-btn" data-key="x" data-code="KeyX" data-key-code="88">B</button>
+                        <button type="button" class="md-circle-btn" data-key="c" data-code="KeyC" data-key-code="67">C</button>
                     </div>
                 </div>
             </div>
@@ -435,12 +435,10 @@
             scene.addEventListener('pointercancel', resetTilt);
         })();
 
-        function dispatchKey(type, btn) {
-            const key = btn.getAttribute('data-key');
-            const code = btn.getAttribute('data-code');
-            const keyCode = Number(btn.getAttribute('data-key-code'));
-            if (!key) return;
+        const pressedKeys = new Set();
 
+        function sendEmulatorKey(type, key, code, keyCode) {
+            if (!key) return;
             const eventInit = {
                 key: key,
                 code: code,
@@ -450,8 +448,9 @@
                 cancelable: true
             };
 
-            window.dispatchEvent(new KeyboardEvent(type, eventInit));
             document.dispatchEvent(new KeyboardEvent(type, eventInit));
+            window.dispatchEvent(new KeyboardEvent(type, eventInit));
+
             const canvas = document.querySelector('#game canvas');
             if (canvas) {
                 canvas.dispatchEvent(new KeyboardEvent(type, eventInit));
@@ -461,26 +460,48 @@
         function initVirtualPad() {
             const buttons = document.querySelectorAll('#kubo-md-pad [data-key]');
             buttons.forEach((btn) => {
+                const key = btn.getAttribute('data-key');
+                const code = btn.getAttribute('data-code');
+                const keyCode = Number(btn.getAttribute('data-key-code'));
+
                 const press = (e) => {
                     e.preventDefault();
                     btn.classList.add('is-pressed');
-                    dispatchKey('keydown', btn);
+                    if (!pressedKeys.has(code)) {
+                        pressedKeys.add(code);
+                        sendEmulatorKey('keydown', key, code, keyCode);
+                    }
                 };
 
                 const release = (e) => {
                     e.preventDefault();
                     btn.classList.remove('is-pressed');
-                    dispatchKey('keyup', btn);
+                    if (pressedKeys.has(code)) {
+                        pressedKeys.delete(code);
+                        sendEmulatorKey('keyup', key, code, keyCode);
+                    }
                 };
 
                 btn.addEventListener('pointerdown', press);
                 btn.addEventListener('pointerup', release);
                 btn.addEventListener('pointercancel', release);
-                btn.addEventListener('pointerleave', (e) => {
-                    if (btn.classList.contains('is-pressed')) {
-                        release(e);
+                btn.addEventListener('lostpointercapture', release);
+            });
+
+            window.addEventListener('blur', () => {
+                pressedKeys.forEach((code) => {
+                    const btn = document.querySelector(`#kubo-md-pad [data-code="${code}"]`);
+                    if (btn) {
+                        btn.classList.remove('is-pressed');
+                        sendEmulatorKey(
+                            'keyup',
+                            btn.getAttribute('data-key'),
+                            code,
+                            Number(btn.getAttribute('data-key-code'))
+                        );
                     }
                 });
+                pressedKeys.clear();
             });
         }
 
@@ -497,7 +518,11 @@
 
             if (window.EJS_emulator && typeof window.EJS_emulator.setSpeed === 'function') {
                 window.EJS_emulator.setSpeed(velocidadeAtual);
-            } else if (window.EJS_emulator && window.EJS_emulator.gameManager && typeof window.EJS_emulator.gameManager.setFastForwardRatio === 'function') {
+            } else if (
+                window.EJS_emulator &&
+                window.EJS_emulator.gameManager &&
+                typeof window.EJS_emulator.gameManager.setFastForwardRatio === 'function'
+            ) {
                 window.EJS_emulator.gameManager.setFastForwardRatio(velocidadeAtual);
             }
         }
@@ -515,6 +540,24 @@
             window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
             window.EJS_startOnLoaded = true;
 
+            window.EJS_defaultControls = {
+                0: {
+                    0: { value: 'x', value2: 'BUTTON_2' },        // B
+                    1: { value: 'e', value2: 'BUTTON_3' },        // Y
+                    2: { value: 'Shift', value2: 'SELECT' },      // Modo
+                    3: { value: 'Enter', value2: 'START' },       // Start
+                    4: { value: 'w', value2: 'DPAD_UP' },         // Cima
+                    5: { value: 's', value2: 'DPAD_DOWN' },       // Baixo
+                    6: { value: 'a', value2: 'DPAD_LEFT' },       // Esquerda
+                    7: { value: 'd', value2: 'DPAD_RIGHT' },      // Direita
+                    8: { value: 'z', value2: 'BUTTON_1' },        // A
+                    9: { value: 'c', value2: 'BUTTON_4' },        // C
+                    10: { value: 'q', value2: 'LEFT_SHOULDER' },  // X
+                    11: { value: 'r', value2: 'RIGHT_SHOULDER' }  // Z
+                },
+                1: {}
+            };
+
             document.getElementById('top-header').style.display = 'none';
             document.getElementById('game-card').style.display = 'none';
             document.getElementById('game-container').style.display = 'flex';
@@ -524,7 +567,7 @@
             const script = document.createElement('script');
             script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
             script.onerror = function () {
-                alert('Erro ao carregar o EmulatorJS. Verifique a ligação ou extensões do navegador.');
+                alert('Erro ao carregar o EmulatorJS. Verifique a conexão ou bloqueadores no navegador.');
             };
             document.body.appendChild(script);
         }
