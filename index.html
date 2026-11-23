@@ -130,16 +130,16 @@
             </div>
 
             <p class="description">
-                Entre no torneio mortal de artes marciais com golpes especiais, combos rápidos e finalizações icônicas em combates intensos um contra um.
+                Entre no torneio mortal de artes marciais com golpes especiais, combos rápidos e finalizações icónicas em combates intensos um contra um.
             </p>
 
             <div class="details">
                 <ul>
-                    <li>Gênero: Luta</li>
+                    <li>Género: Luta</li>
                 </ul>
             </div>
 
-            <button class="btn-play" onclick="iniciarJogo()">JOGAR AGORA</button>
+            <button type="button" class="btn-play" id="btn-play" onclick="iniciarJogo()">JOGAR AGORA</button>
         </div>
     </div>
 
@@ -157,4 +157,64 @@
 
             function updateTilt(clientX, clientY) {
                 const rect = scene.getBoundingClientRect();
-                const x = Math.max(0, Math.min(1, (clientX - rect.left)
+                const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                const y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+
+                const rotY = ((x - 0.5) * 2 * maxTilt).toFixed(2);
+                const rotX = ((0.5 - y) * 2 * maxTilt).toFixed(2);
+
+                card.style.setProperty('--ry', `${rotY}deg`);
+                card.style.setProperty('--rx', `${rotX}deg`);
+                card.style.setProperty('--gx', `${(x * 100).toFixed(1)}%`);
+                card.style.setProperty('--gy', `${(y * 100).toFixed(1)}%`);
+            }
+
+            function resetTilt() {
+                scene.classList.remove('is-interacting');
+                card.style.setProperty('--ry', '0deg');
+                card.style.setProperty('--rx', '0deg');
+                card.style.setProperty('--gx', '50%');
+                card.style.setProperty('--gy', '50%');
+            }
+
+            scene.addEventListener('pointerenter', (e) => {
+                scene.classList.add('is-interacting');
+                updateTilt(e.clientX, e.clientY);
+            });
+
+            scene.addEventListener('pointermove', (e) => {
+                scene.classList.add('is-interacting');
+                updateTilt(e.clientX, e.clientY);
+            });
+
+            scene.addEventListener('pointerleave', resetTilt);
+            scene.addEventListener('pointercancel', resetTilt);
+        })();
+
+        let jogoIniciado = false;
+
+        function iniciarJogo() {
+            if (jogoIniciado) return;
+            jogoIniciado = true;
+
+            document.getElementById('top-header').style.display = 'none';
+            document.getElementById('game-card').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+
+            window.EJS_player = '#game';
+            window.EJS_core = 'genesis_plus_gx';
+            window.EJS_gameName = 'Mortal Kombat';
+            window.EJS_gameUrl = 'Mortal%20Kombat.smd';
+            window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+
+            const script = document.createElement('script');
+            script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+            script.onerror = function () {
+                alert('Não foi possível carregar o EmulatorJS. Verifique a ligação ou extensões do navegador.');
+            };
+            document.body.appendChild(script);
+        }
+    </script>
+
+</body>
+</html>
