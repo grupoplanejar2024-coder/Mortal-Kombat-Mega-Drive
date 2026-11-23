@@ -163,11 +163,14 @@
             position: relative;
             flex: 1 1 auto;
             width: 100%;
-            min-height: 0;
+            height: 100%;
+            min-height: 240px;
             background: #000;
+            overflow: hidden;
         }
 
         #game {
+            position: relative;
             width: 100%;
             height: 100%;
         }
@@ -505,34 +508,16 @@
             if (jogoIniciado) return;
             jogoIniciado = true;
 
-            document.getElementById('top-header').style.display = 'none';
-            document.getElementById('game-card').style.display = 'none';
-            document.getElementById('game-container').style.display = 'flex';
-
             window.EJS_player = '#game';
-            window.EJS_core = 'genesis_plus_gx';
+            window.EJS_core = 'segaMD';
             window.EJS_gameName = 'Mortal Kombat';
             window.EJS_gameUrl = 'Mortal%20Kombat.smd';
             window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
             window.EJS_startOnLoaded = true;
 
-            window.EJS_defaultControls = {
-                0: {
-                    0: { value: 'b', value2: 'BUTTON_2' },
-                    1: { value: 'y', value2: 'BUTTON_3' },
-                    2: { value: 'Shift', value2: 'SELECT' },
-                    3: { value: 'Enter', value2: 'START' },
-                    4: { value: 'w', value2: 'DPAD_UP' },
-                    5: { value: 's', value2: 'DPAD_DOWN' },
-                    6: { value: 'a', value2: 'DPAD_LEFT' },
-                    7: { value: 'd', value2: 'DPAD_RIGHT' },
-                    8: { value: 'z', value2: 'BUTTON_1' },
-                    9: { value: 'x', value2: 'BUTTON_4' },
-                    10: { value: 'q', value2: 'LEFT_SHOULDER' },
-                    11: { value: 'e', value2: 'RIGHT_SHOULDER' }
-                },
-                1: {}
-            };
+            document.getElementById('top-header').style.display = 'none';
+            document.getElementById('game-card').style.display = 'none';
+            document.getElementById('game-container').style.display = 'flex';
 
             initVirtualPad();
 
