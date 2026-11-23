@@ -105,6 +105,15 @@
         .btn-play:hover { background: #a93226; }
         #game-container { display: none; width: 100%; height: 100vh; }
         #game { width: 100%; height: 100%; }
+
+        /* Garante visibilidade e bom encaixe do comando virtual do EmulatorJS */
+        .ejs_virtualGamepad_parent,
+        .ejs_gamepad_container,
+        [class*="virtualGamepad"] {
+            display: block !important;
+            opacity: 0.85 !important;
+            z-index: 999 !important;
+        }
     </style>
 </head>
 <body>
@@ -206,8 +215,8 @@
             window.EJS_gameName = 'Mortal Kombat';
             window.EJS_gameUrl = 'Mortal%20Kombat.smd';
             window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+            window.EJS_VirtualGamepad = true;
 
-            // Layout de botões focado no comando clássico de 3 botões do Mega Drive (A, B, C + Start)
             window.EJS_Buttons = {
                 playPause: true,
                 restart: true,
@@ -227,25 +236,6 @@
                 screenshot: true,
                 cacheManager: false,
                 exitEmulation: false
-            };
-
-            // Mapeamento de teclado amigável no estilo Mega Drive
-            window.EJS_defaultControls = {
-                0: {
-                    0: { value: 'b', value2: 'BUTTON_2' },       // B (Pontapé / ação)
-                    1: { value: 'y', value2: 'BUTTON_3' },       // Y
-                    2: { value: 'shift', value2: 'SELECT' },     // Mode / Select
-                    3: { value: 'enter', value2: 'START' },      // Start
-                    4: { value: 'w', value2: 'DPAD_UP' },        // Cima
-                    5: { value: 's', value2: 'DPAD_DOWN' },      // Baixo
-                    6: { value: 'a', value2: 'DPAD_LEFT' },      // Esquerda
-                    7: { value: 'd', value2: 'DPAD_RIGHT' },     // Direita
-                    8: { value: 'z', value2: 'BUTTON_1' },       // A (Soco / ação)
-                    9: { value: 'x', value2: 'BUTTON_4' },       // C (Bloqueio / ação)
-                    10: { value: 'q', value2: 'LEFT_SHOULDER' }, // X (se usar 6 botões)
-                    11: { value: 'e', value2: 'RIGHT_SHOULDER' } // Z (se usar 6 botões)
-                },
-                1: {}
             };
 
             const script = document.createElement('script');
