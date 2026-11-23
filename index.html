@@ -116,7 +116,7 @@
     <div id="game-card">
         <div class="cover-scene" id="cover-scene">
             <div class="cover-3d" id="cover-3d">
-                <img class="cover-img" src="mortal%20kombat%20mega%20drive.png" alt="Capa Mortal Kombat">
+                <img class="cover-img" src="Mortal%20kombat.jpeg" alt="Capa Mortal Kombat">
                 <div class="cover-glare"></div>
             </div>
         </div>
@@ -157,56 +157,4 @@
 
             function updateTilt(clientX, clientY) {
                 const rect = scene.getBoundingClientRect();
-                const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-                const y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
-
-                const rotY = ((x - 0.5) * 2 * maxTilt).toFixed(2);
-                const rotX = ((0.5 - y) * 2 * maxTilt).toFixed(2);
-
-                card.style.setProperty('--ry', `${rotY}deg`);
-                card.style.setProperty('--rx', `${rotX}deg`);
-                card.style.setProperty('--gx', `${(x * 100).toFixed(1)}%`);
-                card.style.setProperty('--gy', `${(y * 100).toFixed(1)}%`);
-            }
-
-            function resetTilt() {
-                scene.classList.remove('is-interacting');
-                card.style.setProperty('--ry', '0deg');
-                card.style.setProperty('--rx', '0deg');
-                card.style.setProperty('--gx', '50%');
-                card.style.setProperty('--gy', '50%');
-            }
-
-            scene.addEventListener('pointerenter', (e) => {
-                scene.classList.add('is-interacting');
-                updateTilt(e.clientX, e.clientY);
-            });
-
-            scene.addEventListener('pointermove', (e) => {
-                scene.classList.add('is-interacting');
-                updateTilt(e.clientX, e.clientY);
-            });
-
-            scene.addEventListener('pointerleave', resetTilt);
-            scene.addEventListener('pointercancel', resetTilt);
-        })();
-
-        function iniciarJogo() {
-            document.getElementById('top-header').style.display = 'none';
-            document.getElementById('game-card').style.display = 'none';
-            document.getElementById('game-container').style.display = 'block';
-
-            window.EJS_player = '#game';
-            window.EJS_core = 'segaMD';
-            window.EJS_gameName = 'Mortal Kombat';
-            window.EJS_gameUrl = 'Mortal-Kombat.md';
-            window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-
-            const script = document.createElement('script');
-            script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-            document.body.appendChild(script);
-        }
-    </script>
-
-</body>
-</html>
+                const x = Math.max(0, Math.min(1, (clientX - rect.left)
