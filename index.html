@@ -116,7 +116,7 @@
     <div id="game-card">
         <div class="cover-scene" id="cover-scene">
             <div class="cover-3d" id="cover-3d">
-                <img class="cover-img" src="Mortal%20kombat_2.jpeg" alt="Capa Mortal Kombat">
+                <img class="cover-img" src="Mortal%20kombat.jpeg" alt="Capa Mortal Kombat">
                 <div class="cover-glare"></div>
             </div>
         </div>
@@ -153,7 +153,7 @@
             const card = document.getElementById('cover-3d');
             if (!scene || !card) return;
 
-            const maxTilt = 16; // graus de inclinação
+            const maxTilt = 16;
 
             function updateTilt(clientX, clientY) {
                 const rect = scene.getBoundingClientRect();
@@ -191,19 +191,27 @@
             scene.addEventListener('pointercancel', resetTilt);
         })();
 
+        let emuladorIniciado = false;
+
         function iniciarJogo() {
             document.getElementById('top-header').style.display = 'none';
             document.getElementById('game-card').style.display = 'none';
             document.getElementById('game-container').style.display = 'block';
 
+            if (emuladorIniciado) return;
+            emuladorIniciado = true;
+
             window.EJS_player = '#game';
             window.EJS_core = 'segaMD';
             window.EJS_gameName = 'Mortal Kombat';
-            window.EJS_gameUrl = 'Mortal%20Kombat%20(World).md';
+            window.EJS_gameUrl = 'Mortal%20Kombat.smd';
             window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
 
             const script = document.createElement('script');
             script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+            script.onerror = () => {
+                alert('Falha ao carregar o EmulatorJS. Verifique sua conexão ou bloqueadores de anúncio/rede.');
+            };
             document.body.appendChild(script);
         }
     </script>
